@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>As Faxineiras - Login & Cadastro</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4c9ef5, #4c9ef5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      width: 450px;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.15);
+      animation: fadeIn 0.4s ease;
+      max-height: 95vh;
+      overflow-y: auto;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      color: #4c9ef5;
+      font-size: 26px;
+      margin-top: 0;
+    }
+
+    label {
+      font-size: 14px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0 4px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      transition: 0.2s;
+    }
+
+    textarea {
+      height: 70px;
+      resize: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #4c9ef5;
+      outline: none;
+      box-shadow: 0 0 5px #4c9ef5;
+    }
+
+    .erro {
+      border-color: #e53935 !important;
+      box-shadow: 0 0 5px rgba(255,0,0,0.3);
+    }
+
+    .msg-erro {
+      font-size: 13px;
+      color: #e53935;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 12px;
+      background: #4c9ef5;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 17px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: #4c9ef5;
+    }
+
+    .switch {
+      text-align: center;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .switch a {
+      color: #4c9ef5;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Login -->
+    <div id="loginBox">
+      <h2>Login</h2>
+
+      <label>Email</label>
+      <input id="loginEmail" type="email" placeholder="exemplo@gmail.com" />
+      <p id="erroLoginEmail" class="msg-erro">O email deve terminar com @gmail.com</p>
+
+      <label>Senha</label>
+      <input id="loginSenha" type="password" placeholder="Min. 8 caracteres" />
+      <p id="erroLoginSenha" class="msg-erro">A senha deve ter pelo menos 8 caracteres</p>
+
+      <button class="btn" onclick="validarLogin()">Entrar</button>
+
+      <p class="switch">
+        Não tem conta? <a onclick="alternar('cadastroBox','loginBox')">Cadastre-se</a>
+      </p>
+    </div>
+
+    <!-- Cadastro -->
+    <div id="cadastroBox" class="hidden">
+      <h2>Cadastro</h2>
+
+      <label>Nome completo</label>
+      <input id="cadNome" type="text" placeholder="Digite seu nome" />
+      <p id="erroNome" class="msg-erro">Preencha seu nome completo</p>
+
+      <label>Email</label>
+      <input id="cadEmail" type="email" placeholder="exemplo@gmail.com" />
+      <p id="erroCadEmail" class="msg-erro">O email deve terminar com @gmail.com</p>
+
+      <label>CPF</label>
+      <input id="cadCPF" maxlength="14" placeholder="000.000.000-00" />
+      <p id="erroCPF" class="msg-erro">Digite um CPF válido</p>
+
+      <label>Endereço</label>
+      <input id="cadEnd" type="text" placeholder="Rua, número, bairro..." />
+      <p id="erroEnd" class="msg-erro">Informe seu endereço</p>
+
+      <label>Senha</label>
+      <input id="cadSenha" type="password" placeholder="Min. 8 caracteres" />
+      <p id="erroCadSenha" class="msg-erro">A senha deve ter pelo menos 8 caracteres</p>
+
+      <label>Confirmar senha</label>
+      <input id="cadConfirmar" type="password" placeholder="Repita a senha" />
+      <p id="erroConfirmar" class="msg-erro">As senhas não coincidem</p>
+
+      <label>Observação (opcional)</label>
+      <textarea id="cadObs" placeholder="Alguma observação? (opcional)"></textarea>
+
+      <button class="btn" onclick="validarCadastro()">Cadastrar</button>
+
+      <p class="switch">
+        Já tem conta? <a onclick="alternar('loginBox','cadastroBox')">Faça login</a>
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+
+    // Alternar telas
+    function alternar(show, hide) {
+      document.getElementById(show).classList.remove('hidden');
+      document.getElementById(hide).classList.add('hidden');
+    }
+
+    // Função de erro
+    function mostrarErro(campoId, erroId, msg) {
+      document.getElementById(campoId).classList.add("erro");
+      const erro = document.getElementById(erroId);
+      erro.style.display = "block";
+      erro.innerText = msg;
+    }
+
+    function limparErro(campoId, erroId) {
+      document.getElementById(campoId).classList.remove("erro");
+      document.getElementById(erroId).style.display = "none";
+    }
+
+    // ---------------------- LOGIN --------------------------
+    function validarLogin() {
+      let ok = true;
+
+      const email = loginEmail.value;
+      const senha = loginSenha.value;
+
+      limparErro("loginEmail", "erroLoginEmail");
+      limparErro("loginSenha", "erroLoginSenha");
+
+      if (!email.endsWith("@gmail.com")) {
+        mostrarErro("loginEmail", "erroLoginEmail", "Use um email @gmail.com");
+        ok = false;
+      }
+
+      if (senha.length < 8) {
+        mostrarErro("loginSenha", "erroLoginSenha", "A senha precisa ter 8 caracteres");
+        ok = false;
+      }
+
+      if (ok) redirecionar();
+    }
+
+    // Função para validar CPF simples
+    function validarCPF(cpf) {
+      cpf = cpf.replace(/\D/g, '');
+      return cpf.length === 11;
+    }
+
+    // ---------------------- CADASTRO --------------------------
+    function validarCadastro() {
+      let ok = true;
+
+      const nome = cadNome.value.trim();
+      const email = cadEmail.value;
+      const cpf = cadCPF.value;
+      const end = cadEnd.value.trim();
+      const senha = cadSenha.value;
+      const confirmar = cadConfirmar.value;
+
+      limparErro("cadNome", "erroNome");
+      limparErro("cadEmail", "erroCadEmail");
+      limparErro("cadCPF", "erroCPF");
+      limparErro("cadEnd", "erroEnd");
+      limparErro("cadSenha", "erroCadSenha");
+      limparErro("cadConfirmar", "erroConfirmar");
+
+      if (nome.length < 3) {
+        mostrarErro("cadNome", "erroNome", "Digite seu nome completo");
+        ok = false;
+      }
+
+      if (!email.endsWith("@gmail.com")) {
+        mostrarErro("cadEmail", "erroCadEmail", "O email deve terminar com @gmail.com");
+        ok = false;
+      }
+
+      if (!validarCPF(cpf)) {
+        mostrarErro("cadCPF", "erroCPF", "Digite um CPF válido");
+        ok = false;
+      }
+
+      if (end.length < 5) {
+        mostrarErro("cadEnd", "erroEnd", "Informe seu endereço");
+        ok = false;
+      }
+
+      if (senha.length < 8) {
+        mostrarErro("cadSenha", "erroCadSenha", "A senha deve ter no mínimo 8 caracteres");
+        ok = false;
+      }
+
+      if (senha !== confirmar) {
+        mostrarErro("cadConfirmar", "erroConfirmar", "As senhas não coincidem");
+        ok = false;
+      }
+
+      if (ok) redirecionar();
+    }
+
+    function redirecionar() {
+      window.location.href = "index.html";
+    }
+  </script>
+</body>
+</html>
